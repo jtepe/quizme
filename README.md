@@ -39,13 +39,13 @@ Prefix each correct choice with `>`.
 ## Generating a quiz
 
 ```sh
-bun run index.ts quiz.md
+bun run index.ts quizzes/example.md
 ```
 
-This creates `quiz.html` in the same directory. You can also specify an output path:
+This creates `quizzes/example.html` in the same directory as the input. You can also specify an output path:
 
 ```sh
-bun run index.ts quiz.md output.html
+bun run index.ts quizzes/example.md output.html
 ```
 
 Open the generated HTML file in any browser — no server needed.
