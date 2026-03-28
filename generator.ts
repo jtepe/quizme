@@ -12,7 +12,7 @@ export function generateHTML(quiz: Quiz): string {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-tomorrow.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" rel="stylesheet">
 <style>
 ${CSS}
 </style>
@@ -42,18 +42,18 @@ const CSS = `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root {
-  --bg: #0c0b09;
-  --bg-card: #15140f;
-  --bg-card-border: #2a2720;
-  --text: #d8d1c4;
-  --text-dim: #8a8478;
-  --text-heading: #f0ead8;
-  --accent: #c9a84c;
-  --accent-dim: rgba(201,168,76,0.15);
-  --correct: #5a9e6f;
-  --correct-bg: rgba(90,158,111,0.12);
-  --incorrect: #c45c5c;
-  --incorrect-bg: rgba(196,92,92,0.12);
+  --bg: #fafaf8;
+  --bg-card: #ffffff;
+  --bg-card-border: #e2e0dc;
+  --text: #2c2c2c;
+  --text-dim: #888580;
+  --text-heading: #1a1a1a;
+  --accent: #9a7b2d;
+  --accent-dim: rgba(154,123,45,0.08);
+  --correct: #2d7a46;
+  --correct-bg: rgba(45,122,70,0.08);
+  --incorrect: #b83c3c;
+  --incorrect-bg: rgba(184,60,60,0.08);
   --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-mono: 'Fira Code', 'Menlo', 'Consolas', monospace;
   --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -69,16 +69,6 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  background-size: 256px;
-  pointer-events: none;
-  z-index: 9999;
-}
-
 #progress-bar {
   position: fixed;
   top: 0;
@@ -87,7 +77,7 @@ body::before {
   background: var(--accent);
   transition: width var(--transition);
   z-index: 100;
-  box-shadow: 0 0 12px rgba(201,168,76,0.4);
+  box-shadow: 0 0 12px rgba(154,123,45,0.3);
 }
 
 #app {
@@ -148,16 +138,16 @@ body::before {
 code:not([class*="language-"]):not(pre code) {
   font-family: var(--font-mono);
   font-size: 0.88em;
-  background: rgba(201,168,76,0.1);
-  border: 1px solid rgba(201,168,76,0.2);
+  background: rgba(154,123,45,0.07);
+  border: 1px solid rgba(154,123,45,0.18);
   border-radius: 4px;
   padding: 0.15em 0.4em;
-  color: #e8c87a;
+  color: #7a6422;
 }
 
 /* Code blocks - override Prism theme to match our palette */
 pre[class*="language-"] {
-  background: #111110 !important;
+  background: #f5f4f0 !important;
   border: 1px solid var(--bg-card-border) !important;
   border-radius: 6px !important;
   margin: 1rem 0 !important;
@@ -172,6 +162,14 @@ pre[class*="language-"] code {
   background: none !important;
   border: none !important;
   padding: 0 !important;
+}
+
+/* Question body */
+.q-body {
+  margin-bottom: 1.5rem;
+}
+.q-body p {
+  margin-bottom: 0.5rem;
 }
 
 /* Choices */
@@ -239,7 +237,7 @@ pre[class*="language-"] code {
   content: '';
   width: 6px;
   height: 10px;
-  border: solid var(--bg);
+  border: solid #fff;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg) translate(-1px, -1px);
 }
@@ -558,6 +556,7 @@ const JS = `
       '<div class="card">' +
         '<div class="q-counter">QUESTION ' + (idx + 1) + ' / ' + QUIZ.questions.length + '</div>' +
         '<h1>' + mdInline(q.title) + '</h1>' +
+        (q.body ? '<div class="q-body">' + md(q.body) + '</div>' : '') +
         '<div class="choices" id="choices">' + choicesHTML + '</div>' +
         '<div id="result-area"></div>' +
         '<div class="btn-row">' +

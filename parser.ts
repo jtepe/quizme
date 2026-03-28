@@ -5,6 +5,7 @@ export interface Choice {
 
 export interface Question {
   title: string;
+  body: string;
   choices: Choice[];
   answer: string;
 }
@@ -22,10 +23,12 @@ export function parseQuiz(markdown: string): Quiz {
 
   let currentQuestion: {
     title: string;
+    body: string;
     choices: Choice[];
     answer: string;
   } | null = null;
-  let section: "none" | "choices" | "answer" = "none";
+  let section: "none" | "body" | "choices" | "answer" = "none";
+  let bodyLines: string[] = [];
   let answerLines: string[] = [];
 
   for (const line of lines) {
@@ -43,15 +46,18 @@ export function parseQuiz(markdown: string): Quiz {
     if (line.startsWith("## ") && !line.startsWith("### ")) {
       // Save previous question
       if (currentQuestion) {
+        currentQuestion.body = bodyLines.join("\n").trim();
         currentQuestion.answer = answerLines.join("\n").trim();
         questions.push(currentQuestion);
       }
       currentQuestion = {
         title: line.slice(3).trim(),
+        body: "",
         choices: [],
         answer: "",
       };
-      section = "none";
+      section = "body";
+      bodyLines = [];
       answerLines = [];
       continue;
     }
@@ -67,6 +73,10 @@ export function parseQuiz(markdown: string): Quiz {
     }
 
     if (!currentQuestion) continue;
+
+    if (section === "body") {
+      bodyLines.push(line);
+    }
 
     if (section === "choices") {
       const choiceMatch = line.match(/^\*\s+>(.*)/);
@@ -93,6 +103,7 @@ export function parseQuiz(markdown: string): Quiz {
 
   // Save last question
   if (currentQuestion) {
+    currentQuestion.body = bodyLines.join("\n").trim();
     currentQuestion.answer = answerLines.join("\n").trim();
     questions.push(currentQuestion);
   }
