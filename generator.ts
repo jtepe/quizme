@@ -171,6 +171,16 @@ pre[class*="language-"] code {
 .q-body p {
   margin-bottom: 0.5rem;
 }
+.q-body ul,
+.q-body ol,
+.answer-reveal .prose ul,
+.answer-reveal .prose ol {
+  margin: 0.75rem 0 0.75rem 1.25rem;
+}
+.q-body li,
+.answer-reveal .prose li {
+  margin-bottom: 0.35rem;
+}
 
 /* Choices */
 .choices {
@@ -449,7 +459,7 @@ const JS = `
   let results = [];
   let checked = false;
 
-  // Render markdown subset: fenced code blocks, inline code, paragraphs
+  // Render markdown subset: fenced code blocks, inline code, paragraphs, simple lists
   function md(raw) {
     // HTML-escape first
     var s = esc(raw);
@@ -460,29 +470,7 @@ const JS = `
     });
     // Inline code
     s = s.replace(/\`([^\`]+)\`/g, '<code>$1</code>');
-    // Split into paragraphs (skip if already contains block elements)
-    if (s.indexOf('<pre') === -1) {
-      s = s.split(/\\n\\n+/).map(function(p) {
-        p = p.trim();
-        return p ? '<p>' + p + '</p>' : '';
-      }).join('');
-    } else {
-      // Mixed content: wrap non-pre sections in <p>
-      s = s.replace(/(^|<\\/pre>)([\\s\\S]*?)($|<pre)/g, function(_, before, text, after) {
-        var trimmed = text.trim();
-        if (!trimmed) return before + after;
-        var paras = trimmed.split(/\\n\\n+/).map(function(p) {
-          p = p.trim();
-          return p ? '<p>' + p + '</p>' : '';
-        }).join('');
-        return before + paras + after;
-      });
-    }
-    // Clean up stray newlines within paragraphs
-    s = s.replace(/<p>([\\s\\S]*?)<\\/p>/g, function(_, inner) {
-      return '<p>' + inner.replace(/\\n/g, ' ') + '</p>';
-    });
-    return s;
+    return renderBlocks(s);
   }
 
   // Render inline markdown only (for choices — no block code)
@@ -496,6 +484,41 @@ const JS = `
     // Inline code
     s = s.replace(/\`([^\`]+)\`/g, '<code>$1</code>');
     return s;
+  }
+
+  function renderBlocks(s) {
+    return s.split(/(<pre[\\s\\S]*?<\\/pre>)/g).map(function(part) {
+      if (!part) return '';
+      if (part.indexOf('<pre') === 0) return part;
+      return part.split(/\\n\\n+/).map(renderTextBlock).join('');
+    }).join('');
+  }
+
+  function renderTextBlock(block) {
+    var trimmed = block.trim();
+    if (!trimmed) return '';
+
+    var lines = trimmed.split(/\\n+/).map(function(line) {
+      return line.trim();
+    }).filter(Boolean);
+
+    if (lines.length > 0 && lines.every(function(line) {
+      return /^[-*]\\s+/.test(line);
+    })) {
+      return '<ul>' + lines.map(function(line) {
+        return '<li>' + line.replace(/^[-*]\\s+/, '') + '</li>';
+      }).join('') + '</ul>';
+    }
+
+    if (lines.length > 0 && lines.every(function(line) {
+      return /^\\d+\\.\\s+/.test(line);
+    })) {
+      return '<ol>' + lines.map(function(line) {
+        return '<li>' + line.replace(/^\\d+\\.\\s+/, '') + '</li>';
+      }).join('') + '</ol>';
+    }
+
+    return '<p>' + trimmed.replace(/\\n/g, ' ') + '</p>';
   }
 
   function highlight() {
@@ -651,7 +674,7 @@ const JS = `
       return '<div class="summary-item ' + cls + '" style="animation-delay:' + (i * 0.06) + 's">' +
         '<span class="icon">' + icon + '</span>' +
         '<span class="q-num">' + (i + 1) + '.</span>' +
-        '<span>' + esc(q.title) + '</span>' +
+        '<span>' + mdInline(q.title) + '</span>' +
       '</div>';
     }).join('');
 
@@ -672,6 +695,8 @@ const JS = `
       checked = false;
       render();
     });
+
+    highlight();
   }
 
   function esc(s) {

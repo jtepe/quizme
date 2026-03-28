@@ -36,6 +36,7 @@ Prefix each correct choice with `>`.
 - The explanation goes under `### Answer` (shown after the user checks their answer)
 - A quiz can have 1 to 20 questions, each with 2 to 6 choices
 - Inline code with backticks and fenced code blocks (` ```lang `) are supported in questions, choices, and answers — they render with syntax highlighting via [Prism.js](https://prismjs.com/)
+- Simple unordered (`* item`) and ordered (`1. item`) lists are supported in question bodies and answers
 
 ## Generating a quiz
 
