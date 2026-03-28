@@ -20,13 +20,21 @@ export function parseQuiz(markdown: string): Quiz {
   let title = "";
   const questions: Question[] = [];
 
-  let currentQuestion: { title: string; choices: Choice[]; answer: string } | null = null;
+  let currentQuestion: {
+    title: string;
+    choices: Choice[];
+    answer: string;
+  } | null = null;
   let section: "none" | "choices" | "answer" = "none";
   let answerLines: string[] = [];
 
   for (const line of lines) {
     // Quiz title
-    if (line.startsWith("# ") && !line.startsWith("## ") && !line.startsWith("### ")) {
+    if (
+      line.startsWith("# ") &&
+      !line.startsWith("## ") &&
+      !line.startsWith("### ")
+    ) {
       title = line.slice(2).trim();
       continue;
     }
@@ -38,7 +46,11 @@ export function parseQuiz(markdown: string): Quiz {
         currentQuestion.answer = answerLines.join("\n").trim();
         questions.push(currentQuestion);
       }
-      currentQuestion = { title: line.slice(3).trim(), choices: [], answer: "" };
+      currentQuestion = {
+        title: line.slice(3).trim(),
+        choices: [],
+        answer: "",
+      };
       section = "none";
       answerLines = [];
       continue;
@@ -59,11 +71,17 @@ export function parseQuiz(markdown: string): Quiz {
     if (section === "choices") {
       const choiceMatch = line.match(/^\*\s+>(.*)/);
       if (choiceMatch) {
-        currentQuestion.choices.push({ text: choiceMatch[1]!.trim(), correct: true });
+        currentQuestion.choices.push({
+          text: choiceMatch[1]!.trim(),
+          correct: true,
+        });
       } else {
         const normalMatch = line.match(/^\*\s+(.*)/);
         if (normalMatch) {
-          currentQuestion.choices.push({ text: normalMatch[1]!.trim(), correct: false });
+          currentQuestion.choices.push({
+            text: normalMatch[1]!.trim(),
+            correct: false,
+          });
         }
       }
     }
@@ -80,7 +98,8 @@ export function parseQuiz(markdown: string): Quiz {
   }
 
   if (!title) throw new Error("Quiz title not found (expected # Title)");
-  if (questions.length === 0) throw new Error("No questions found (expected ## Question)");
+  if (questions.length === 0)
+    throw new Error("No questions found (expected ## Question)");
 
   return { title, questions };
 }
