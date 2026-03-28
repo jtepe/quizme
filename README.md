@@ -1,15 +1,5 @@
 # quizme
 
-To install dependencies:
+Simple web-based quiz generator. It takes markdown files with questions and the answers and
+generates interactive quizzes as HTML.
 
-```bash
-bun install
-```
-
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.3.10. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
