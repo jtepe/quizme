@@ -48,8 +48,8 @@ const CSS = `
   --text: #2c2c2c;
   --text-dim: #888580;
   --text-heading: #1a1a1a;
-  --accent: #9a7b2d;
-  --accent-dim: rgba(154,123,45,0.08);
+  --accent: #4a6fa5;
+  --accent-dim: rgba(74,111,165,0.08);
   --correct: #2d7a46;
   --correct-bg: rgba(45,122,70,0.08);
   --incorrect: #b83c3c;
@@ -77,7 +77,7 @@ html, body {
   background: var(--accent);
   transition: width var(--transition);
   z-index: 100;
-  box-shadow: 0 0 12px rgba(154,123,45,0.3);
+  box-shadow: 0 0 12px rgba(74,111,165,0.3);
 }
 
 #app {
@@ -138,11 +138,11 @@ html, body {
 code:not([class*="language-"]):not(pre code) {
   font-family: var(--font-mono);
   font-size: 0.88em;
-  background: rgba(154,123,45,0.07);
-  border: 1px solid rgba(154,123,45,0.18);
+  background: rgba(74,111,165,0.07);
+  border: 1px solid rgba(74,111,165,0.18);
   border-radius: 4px;
   padding: 0.15em 0.4em;
-  color: #7a6422;
+  color: #3a5a8a;
 }
 
 /* Code blocks - override Prism theme to match our palette */
