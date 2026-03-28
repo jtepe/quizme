@@ -11,7 +11,8 @@ export function generateHTML(quiz: Quiz): string {
 <title>${escapeHTML(quiz.title)}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-tomorrow.min.css" rel="stylesheet">
 <style>
 ${CSS}
 </style>
@@ -19,6 +20,8 @@ ${CSS}
 <body>
 <div id="progress-bar"></div>
 <div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"><\/script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"><\/script>
 <script>
 const QUIZ = ${quizJSON};
 ${JS}
@@ -42,7 +45,7 @@ const CSS = `
   --bg: #0c0b09;
   --bg-card: #15140f;
   --bg-card-border: #2a2720;
-  --text: #e0d9cb;
+  --text: #d8d1c4;
   --text-dim: #8a8478;
   --text-heading: #f0ead8;
   --accent: #c9a84c;
@@ -51,8 +54,8 @@ const CSS = `
   --correct-bg: rgba(90,158,111,0.12);
   --incorrect: #c45c5c;
   --incorrect-bg: rgba(196,92,92,0.12);
-  --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
-  --font-mono: 'DM Mono', 'Menlo', 'Consolas', monospace;
+  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Fira Code', 'Menlo', 'Consolas', monospace;
   --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -60,8 +63,8 @@ html, body {
   height: 100%;
   background: var(--bg);
   color: var(--text);
-  font-family: var(--font-display);
-  font-size: 18px;
+  font-family: var(--font-body);
+  font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
@@ -121,7 +124,7 @@ body::before {
 
 /* Card */
 .card {
-  max-width: 640px;
+  max-width: 680px;
   width: 100%;
   animation: fadeUp 0.5s ease both;
 }
@@ -132,13 +135,43 @@ body::before {
 }
 
 .card h1 {
-  font-family: var(--font-display);
-  font-size: 2.4rem;
+  font-family: var(--font-body);
+  font-size: 1.75rem;
   font-weight: 600;
   color: var(--text-heading);
-  line-height: 1.25;
+  line-height: 1.3;
   margin-bottom: 2rem;
   letter-spacing: -0.01em;
+}
+
+/* Inline code */
+code:not([class*="language-"]):not(pre code) {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 4px;
+  padding: 0.15em 0.4em;
+  color: #e8c87a;
+}
+
+/* Code blocks - override Prism theme to match our palette */
+pre[class*="language-"] {
+  background: #111110 !important;
+  border: 1px solid var(--bg-card-border) !important;
+  border-radius: 6px !important;
+  margin: 1rem 0 !important;
+  padding: 1rem !important;
+  font-size: 0.85rem !important;
+  line-height: 1.6 !important;
+  overflow-x: auto;
+}
+pre[class*="language-"] code {
+  font-family: var(--font-mono) !important;
+  font-size: 0.85rem !important;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
 }
 
 /* Choices */
@@ -237,8 +270,16 @@ body::before {
 }
 
 .choice-text {
-  font-size: 1rem;
+  font-size: 0.95rem;
   line-height: 1.5;
+  flex: 1;
+  min-width: 0;
+}
+.choice-text code:not([class*="language-"]) {
+  font-size: 0.85em;
+}
+.choice-text pre[class*="language-"] {
+  margin: 0.5rem 0 0 !important;
 }
 
 /* Answer reveal */
@@ -258,9 +299,14 @@ body::before {
 }
 .answer-reveal .prose {
   color: var(--text);
-  font-size: 1rem;
+  font-size: 0.95rem;
   line-height: 1.7;
-  white-space: pre-wrap;
+}
+.answer-reveal .prose p {
+  margin-bottom: 0.75rem;
+}
+.answer-reveal .prose p:last-child {
+  margin-bottom: 0;
 }
 
 /* Result banner */
@@ -319,7 +365,7 @@ button:disabled {
   animation: fadeUp 0.6s ease both;
 }
 .final .score {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 5rem;
   font-weight: 700;
   color: var(--accent);
@@ -334,8 +380,8 @@ button:disabled {
   margin-bottom: 3rem;
 }
 .final h2 {
-  font-family: var(--font-display);
-  font-size: 1.4rem;
+  font-family: var(--font-body);
+  font-size: 1.3rem;
   font-weight: 600;
   color: var(--text-heading);
   margin-bottom: 1.5rem;
@@ -380,7 +426,7 @@ button:disabled {
   animation: fadeUp 0.6s ease both;
 }
 .start h1 {
-  font-size: 3rem;
+  font-size: 2.5rem;
   margin-bottom: 0.5rem;
 }
 .start .meta {
@@ -401,9 +447,64 @@ const JS = `
 (function() {
   const app = document.getElementById('app');
   const bar = document.getElementById('progress-bar');
-  let current = -1; // -1 = start screen
+  let current = -1;
   let results = [];
   let checked = false;
+
+  // Render markdown subset: fenced code blocks, inline code, paragraphs
+  function md(raw) {
+    // HTML-escape first
+    var s = esc(raw);
+    // Fenced code blocks: \`\`\`lang\\n...\\n\`\`\`
+    s = s.replace(/\`\`\`(\\w*)\\n([\\s\\S]*?)\`\`\`/g, function(_, lang, code) {
+      var cls = lang ? 'language-' + lang : 'language-none';
+      return '<pre class="' + cls + '"><code class="' + cls + '">' + code.replace(/\\n$/, '') + '</code></pre>';
+    });
+    // Inline code
+    s = s.replace(/\`([^\`]+)\`/g, '<code>$1</code>');
+    // Split into paragraphs (skip if already contains block elements)
+    if (s.indexOf('<pre') === -1) {
+      s = s.split(/\\n\\n+/).map(function(p) {
+        p = p.trim();
+        return p ? '<p>' + p + '</p>' : '';
+      }).join('');
+    } else {
+      // Mixed content: wrap non-pre sections in <p>
+      s = s.replace(/(^|<\\/pre>)([\\s\\S]*?)($|<pre)/g, function(_, before, text, after) {
+        var trimmed = text.trim();
+        if (!trimmed) return before + after;
+        var paras = trimmed.split(/\\n\\n+/).map(function(p) {
+          p = p.trim();
+          return p ? '<p>' + p + '</p>' : '';
+        }).join('');
+        return before + paras + after;
+      });
+    }
+    // Clean up stray newlines within paragraphs
+    s = s.replace(/<p>([\\s\\S]*?)<\\/p>/g, function(_, inner) {
+      return '<p>' + inner.replace(/\\n/g, ' ') + '</p>';
+    });
+    return s;
+  }
+
+  // Render inline markdown only (for choices — no block code)
+  function mdInline(raw) {
+    var s = esc(raw);
+    // Fenced code blocks in choices
+    s = s.replace(/\`\`\`(\\w*)\\n([\\s\\S]*?)\`\`\`/g, function(_, lang, code) {
+      var cls = lang ? 'language-' + lang : 'language-none';
+      return '<pre class="' + cls + '"><code class="' + cls + '">' + code.replace(/\\n$/, '') + '</code></pre>';
+    });
+    // Inline code
+    s = s.replace(/\`([^\`]+)\`/g, '<code>$1</code>');
+    return s;
+  }
+
+  function highlight() {
+    if (typeof Prism !== 'undefined') {
+      Prism.highlightAllUnder(app);
+    }
+  }
 
   function render() {
     if (current === -1) return renderStart();
@@ -420,15 +521,14 @@ const JS = `
 
   function renderStart() {
     updateProgress();
-    app.innerHTML = \`
-      <div class="card start">
-        <h1>\${esc(QUIZ.title)}</h1>
-        <div class="meta">\${QUIZ.questions.length} QUESTION\${QUIZ.questions.length !== 1 ? 'S' : ''}</div>
-        <div class="btn-row" style="justify-content:center">
-          <button id="start-btn">BEGIN</button>
-        </div>
-      </div>
-    \`;
+    app.innerHTML =
+      '<div class="card start">' +
+        '<h1>' + esc(QUIZ.title) + '</h1>' +
+        '<div class="meta">' + QUIZ.questions.length + ' QUESTION' + (QUIZ.questions.length !== 1 ? 'S' : '') + '</div>' +
+        '<div class="btn-row" style="justify-content:center">' +
+          '<button id="start-btn">BEGIN</button>' +
+        '</div>' +
+      '</div>';
     document.getElementById('start-btn').addEventListener('click', function() {
       current = 0;
       render();
@@ -450,20 +550,22 @@ const JS = `
     let choicesHTML = q.choices.map(function(c, i) {
       return '<div class="choice" data-idx="' + i + '">' +
         '<div class="checkbox"></div>' +
-        '<div class="choice-text">' + esc(c.text) + '</div>' +
+        '<div class="choice-text">' + mdInline(c.text) + '</div>' +
       '</div>';
     }).join('');
 
     app.innerHTML = tallyHTML +
       '<div class="card">' +
         '<div class="q-counter">QUESTION ' + (idx + 1) + ' / ' + QUIZ.questions.length + '</div>' +
-        '<h1>' + esc(q.title) + '</h1>' +
+        '<h1>' + mdInline(q.title) + '</h1>' +
         '<div class="choices" id="choices">' + choicesHTML + '</div>' +
         '<div id="result-area"></div>' +
         '<div class="btn-row">' +
           '<button id="check-btn" disabled>CHECK</button>' +
         '</div>' +
       '</div>';
+
+    highlight();
 
     var selected = new Set();
     var choiceEls = document.querySelectorAll('.choice');
@@ -514,13 +616,15 @@ const JS = `
       var answerHTML = q.answer ?
         '<div class="answer-reveal">' +
           '<div class="label">EXPLANATION</div>' +
-          '<div class="prose">' + esc(q.answer) + '</div>' +
+          '<div class="prose">' + md(q.answer) + '</div>' +
         '</div>' : '';
 
       resultArea.innerHTML =
         '<div class="result-banner ' + bannerClass + '">' +
           '<span>' + bannerIcon + '</span> ' + bannerText +
         '</div>' + answerHTML;
+
+      highlight();
 
       checkBtn.style.display = 'none';
       var nextBtn = document.createElement('button');
