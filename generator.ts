@@ -521,6 +521,15 @@ const JS = `
     return '<p>' + trimmed.replace(/\\n/g, ' ') + '</p>';
   }
 
+  function shuffle(arr) {
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = tmp;
+    }
+  }
+
   function highlight() {
     if (typeof Prism !== 'undefined') {
       Prism.highlightAllUnder(app);
@@ -551,6 +560,8 @@ const JS = `
         '</div>' +
       '</div>';
     document.getElementById('start-btn').addEventListener('click', function() {
+      shuffle(QUIZ.questions);
+      QUIZ.questions.forEach(function(q) { shuffle(q.choices); });
       current = 0;
       render();
     });
@@ -698,6 +709,8 @@ const JS = `
       '</div>';
 
     document.getElementById('restart-btn').addEventListener('click', function() {
+      shuffle(QUIZ.questions);
+      QUIZ.questions.forEach(function(q) { shuffle(q.choices); });
       current = -1;
       results = [];
       checked = false;
