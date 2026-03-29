@@ -614,17 +614,25 @@ const JS = `
 
       var isCorrect = true;
       q.choices.forEach(function(c, i) {
+        var wasSelected = selected.has(i);
+        if (c.correct && !wasSelected) isCorrect = false;
+        if (!c.correct && wasSelected) isCorrect = false;
+      });
+
+      q.choices.forEach(function(c, i) {
         var el = choiceEls[i];
         el.classList.add('disabled');
         var wasSelected = selected.has(i);
-        if (c.correct) {
-          el.classList.remove('selected');
-          el.classList.add('revealed-correct');
-          if (!wasSelected) isCorrect = false;
-        } else if (wasSelected) {
-          el.classList.remove('selected');
-          el.classList.add('revealed-incorrect');
-          isCorrect = false;
+        if (isCorrect) {
+          if (c.correct) {
+            el.classList.remove('selected');
+            el.classList.add('revealed-correct');
+          }
+        } else {
+          if (wasSelected && !c.correct) {
+            el.classList.remove('selected');
+            el.classList.add('revealed-incorrect');
+          }
         }
       });
 
@@ -635,7 +643,7 @@ const JS = `
       var bannerText = isCorrect ? 'CORRECT' : 'INCORRECT';
       var bannerIcon = isCorrect ? '\\u2713' : '\\u2717';
 
-      var answerHTML = q.answer ?
+      var answerHTML = (isCorrect && q.answer) ?
         '<div class="answer-reveal">' +
           '<div class="label">EXPLANATION</div>' +
           '<div class="prose">' + md(q.answer) + '</div>' +
